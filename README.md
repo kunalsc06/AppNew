@@ -2,7 +2,8 @@
 
 A beautiful, responsive weather application built by BMSIT students.
 
-![Weatherly Preview](https://via.placeholder.com/800x400?text=Weatherly+Preview) <!-- Replace with actual screenshot later -->
+![Weatherly Preview](<img width="1583" height="957" alt="image" src="https://github.com/user-attachments/assets/1c826a1a-90d2-4dbc-94e9-fc2ae8697dd6" />
+) <!-- Replace with actual screenshot later -->
 
 ## ✨ Features
 - Live weather search
