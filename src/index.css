@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
+/* Custom Theme Extensions - Correct v4 syntax */
 @theme {
-  font-family: {
-    sans: 'Inter, system-ui, sans-serif';
-  }
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  /* Optional: You can add more customizations here later */
+  /* --color-primary: #3b82f6; */
+  /* --radius-3xl: 1.75rem; */
 }
