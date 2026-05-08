@@ -29,7 +29,3 @@ export interface ForecastDay {
     icon: string;
   }>;
 }
-
-export interface ForecastData {
-  list: ForecastDay[];
-}

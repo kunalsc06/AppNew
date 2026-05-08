@@ -1,4 +1,4 @@
-import { Search, MapPin } from 'lucide-react';
+import  { Search, MapPin } from 'lucide-react';
 
 interface SearchBarProps {
   city: string;
@@ -11,7 +11,7 @@ interface SearchBarProps {
 const SearchBar = ({ city, setCity, onSearch, loading, onGeolocation }: SearchBarProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(city);
+    if (city.trim()) onSearch(city.trim());
   };
 
   return (
@@ -24,24 +24,27 @@ const SearchBar = ({ city, setCity, onSearch, loading, onGeolocation }: SearchBa
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              placeholder="Search any city..."
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl py-4 pl-12 pr-6 text-white placeholder-slate-400 focus:outline-none focus:border-white/40 text-lg"
+              placeholder="Search any city... (e.g. Mumbai, Delhi)"
+              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl py-4 pl-12 pr-6 
+                         text-white placeholder-slate-400 focus:outline-none focus:border-white/40 text-lg"
             />
           </div>
 
           <button
             type="button"
             onClick={onGeolocation}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 px-6 rounded-2xl flex items-center justify-center transition-all active:scale-95"
             disabled={loading}
+            className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 px-6 rounded-2xl 
+                       flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
           >
             <MapPin size={24} className="text-white" />
           </button>
 
           <button
             type="submit"
-            disabled={loading}
-            className="bg-white text-slate-900 px-8 rounded-2xl font-semibold hover:bg-slate-100 active:scale-95 transition-all flex items-center"
+            disabled={loading || !city.trim()}
+            className="bg-white text-slate-900 px-8 rounded-2xl font-semibold hover:bg-slate-100 
+                       active:scale-95 transition-all flex items-center disabled:opacity-50"
           >
             {loading ? "Searching..." : "Search"}
           </button>
