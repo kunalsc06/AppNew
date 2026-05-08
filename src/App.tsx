@@ -42,32 +42,30 @@ function App() {
     }
   };
 
-  
   const getLocation = () => {
-  if (!navigator.geolocation) {
-    setError("Geolocation is not supported by your browser");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      setLoading(true);
-      setError('');
-      try {
-        // TODO: Your partner can enhance this later with reverse geocoding
-        console.log("Location detected:", position.coords.latitude, position.coords.longitude);
-        setError("Geolocation feature coming soon ✨");
-      } catch (err) {
-        setError("Failed to get weather for your location");
-      } finally {
-        setLoading(false);
-      }
-    },
-    (err) => {
-      setError("Unable to retrieve your location. Please search manually.");
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
     }
-  );
-};
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        setLoading(true);
+        setError('');
+        try {
+          console.log("Location detected:", position.coords.latitude, position.coords.longitude);
+          setError("Geolocation feature coming soon ✨");
+        } catch {
+          setError("Failed to get weather for your location");
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => {
+        setError("Unable to retrieve your location. Please search manually.");
+      }
+    );
+  };
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
@@ -83,8 +81,18 @@ function App() {
 
         <div className="flex justify-center mb-10">
           <div className="bg-white/10 backdrop-blur-3xl border border-white/30 rounded-3xl p-1.5 flex shadow-2xl">
-            <button onClick={() => setUnit('C')} className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'C' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}>°C</button>
-            <button onClick={() => setUnit('F')} className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'F' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}>°F</button>
+            <button
+              onClick={() => setUnit('C')}
+              className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'C' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}
+            >
+              °C
+            </button>
+            <button
+              onClick={() => setUnit('F')}
+              className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'F' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}
+            >
+              °F
+            </button>
           </div>
         </div>
 
