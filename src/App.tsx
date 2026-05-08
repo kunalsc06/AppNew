@@ -42,28 +42,32 @@ function App() {
     }
   };
 
+  
   const getLocation = () => {
-    if (!navigator.geolocation) {
-      setError("Geolocation not supported by your browser");
-      return;
-    }
+  if (!navigator.geolocation) {
+    setError("Geolocation is not supported by your browser");
+    return;
+  }
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        setLoading(true);
-        setError('');
-        try {
-          // For simplicity, we'll just show a message for now
-          setError("Geolocation + reverse lookup coming soon");
-        } catch {
-          setError("Failed to get weather for your location");
-        } finally {
-          setLoading(false);
-        }
-      },
-      () => setError("Unable to retrieve your location")
-    );
-  };
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      setLoading(true);
+      setError('');
+      try {
+        // TODO: Your partner can enhance this later with reverse geocoding
+        console.log("Location detected:", position.coords.latitude, position.coords.longitude);
+        setError("Geolocation feature coming soon ✨");
+      } catch (err) {
+        setError("Failed to get weather for your location");
+      } finally {
+        setLoading(false);
+      }
+    },
+    (err) => {
+      setError("Unable to retrieve your location. Please search manually.");
+    }
+  );
+};
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
