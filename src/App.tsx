@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { WeatherData, ForecastDay } from './types/weather';
+import { fetchCurrentWeather, fetchForecast } from './utils/weatherApi';
 
 import SearchBar from './assets/searchBar';
 import CurrentWeather from './assets/CurrentWeather';
@@ -23,34 +24,45 @@ function App() {
   const fetchWeather = async (searchCity: string) => {
     setLoading(true);
     setError('');
-    
-    // Temporary fake data so you can see the full beautiful UI
-    setTimeout(() => {
-      // Fake current weather
-      const fakeCurrent: WeatherData = {
-        name: searchCity,
-        sys: { country: "IN" },
-        main: { temp: 29, feels_like: 31, humidity: 65 },
-        weather: [{ description: "clear sky", icon: "01d", main: "Clear" }],
-        wind: { speed: 3.5 },
-        visibility: 10000
-      };
+    setCurrent(null);
+    setForecast([]);
 
-      const fakeForecast: ForecastDay[] = [
-        { dt: Date.now()/1000 + 86400, main: { temp: 28 }, weather: [{ description: "few clouds", icon: "02d" }] },
-        { dt: Date.now()/1000 + 172800, main: { temp: 30 }, weather: [{ description: "clear sky", icon: "01d" }] },
-        { dt: Date.now()/1000 + 259200, main: { temp: 27 }, weather: [{ description: "light rain", icon: "10d" }] },
-        { dt: Date.now()/1000 + 345600, main: { temp: 26 }, weather: [{ description: "broken clouds", icon: "04d" }] },
-      ];
+    try {
+      const [currentData, forecastData] = await Promise.all([
+        fetchCurrentWeather(searchCity),
+        fetchForecast(searchCity)
+      ]);
 
-      setCurrent(fakeCurrent);
-      setForecast(fakeForecast);
+      setCurrent(currentData);
+      setForecast(forecastData);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch weather. Please try another city.");
+    } finally {
       setLoading(false);
-    }, 1400);
+    }
   };
 
   const getLocation = () => {
-    setError("Geolocation will be connected with API later");
+    if (!navigator.geolocation) {
+      setError("Geolocation not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        setLoading(true);
+        setError('');
+        try {
+          // For simplicity, we'll just show a message for now
+          setError("Geolocation + reverse lookup coming soon");
+        } catch {
+          setError("Failed to get weather for your location");
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => setError("Unable to retrieve your location")
+    );
   };
 
   return (
@@ -65,21 +77,10 @@ function App() {
           <p className="text-slate-400 text-xl">Real-time Weather Dashboard • BMSIT</p>
         </header>
 
-        {/* Unit Toggle */}
         <div className="flex justify-center mb-10">
           <div className="bg-white/10 backdrop-blur-3xl border border-white/30 rounded-3xl p-1.5 flex shadow-2xl">
-            <button
-              onClick={() => setUnit('C')}
-              className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'C' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}
-            >
-              °C
-            </button>
-            <button
-              onClick={() => setUnit('F')}
-              className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'F' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}
-            >
-              °F
-            </button>
+            <button onClick={() => setUnit('C')} className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'C' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}>°C</button>
+            <button onClick={() => setUnit('F')} className={`px-10 py-3 rounded-2xl font-semibold transition-all ${unit === 'F' ? 'bg-white text-slate-900 shadow-lg' : 'hover:bg-white/20'}`}>°F</button>
           </div>
         </div>
 
@@ -100,15 +101,11 @@ function App() {
         {loading && (
           <div className="mt-20 flex flex-col items-center">
             <div className="w-14 h-14 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-            <p className="mt-6 text-slate-400 text-lg">Fetching latest weather data...</p>
+            <p className="mt-6 text-slate-400 text-lg">Fetching latest weather...</p>
           </div>
         )}
 
-        {current && !loading && (
-          <div className="mt-12">
-            <CurrentWeather data={current} convertTemp={convertTemp} unit={unit} />
-          </div>
-        )}
+        {current && !loading && <CurrentWeather data={current} convertTemp={convertTemp} unit={unit} />}
 
         {forecast.length > 0 && (
           <div className="mt-16">
